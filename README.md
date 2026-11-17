@@ -7,6 +7,11 @@ passagem, baixo pedal e acordes com tensões.
 A teoria musical é toda feita em código, com regras fixas e testes. IA só entra mais
 tarde, para escolher e explicar as ideias.
 
+**Usar agora:** https://amaurijr123.github.io/cantico-novo/
+
+No computador, ↑ e ↓ trocam de ideia, ← e → trocam de seção e G alterna entre
+cifra e graus romanos.
+
 ## Status
 
 | Fase        | O que entrega                                     | Situação |
@@ -14,8 +19,8 @@ tarde, para escolher e explicar as ideias.
 | Fundação    | Projeto, testes, CI, fixtures                     | ✅       |
 | Ler a cifra | Acordes, seções, tom, graus romanos, transposição | ✅       |
 | Receitas    | As 7 técnicas e a escolha das 5 ideias            | ✅       |
-| v1          | Interface: colar, escolher seção, ver ideias      | ⏳       |
-| v2          | Ouvir no piano, teclado na tela, entrada por link |          |
+| v1          | Interface: colar, escolher seção, ver ideias      | ✅       |
+| v2          | Ouvir no piano, teclado na tela, entrada por link | ⏳       |
 
 ## Rodando na sua máquina
 
@@ -42,7 +47,8 @@ src/
     transpose.ts  subir e descer o tom, mantendo a grafia certa (Bb, não A#)
     roman.ts      graus romanos: I V/3 vi IV, V7/vi, ii7/IV
     recipes/      as 7 técnicas de rearmonização e o seletor das 5 ideias
-  App.tsx         interface (provisória)
+  ui/             componentes da tela: cifra, ideias, tom e transposição
+  App.tsx         a tela principal e os atalhos de teclado
 tests/
   fixtures/       8 cifras inventadas no estilo louvor, com o tom e as seções esperados
 ```

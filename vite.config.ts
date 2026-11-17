@@ -7,6 +7,6 @@ export default defineConfig({
   // Caminho base para publicar no GitHub Pages (https://<usuario>.github.io/cantico-novo/).
   base: '/cantico-novo/',
   test: {
-    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}', 'tests/**/*.test.ts'],
   },
 })

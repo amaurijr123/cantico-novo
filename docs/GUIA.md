@@ -231,14 +231,37 @@ tiverem algo a sugerir, completa com a segunda melhor ideia de cada uma.
 
 O arquivo `testing.ts` só tem atalhos para os testes, como `run(receita, 'G Em', 'G')`.
 
-## 3. Próximo passo (semanas 9 e 10): a interface
+### A interface (`src/App.tsx` e `src/ui/`)
 
-O `core` está completo: lê a cifra, acha o tom, transpõe, escreve em graus e gera as
-5 ideias. Agora vem a tela em React, que só chama essas funções:
+A tela só chama o `core`; nenhuma regra de música mora nos componentes.
 
-1. Área para colar a cifra.
-2. Abas das seções, botão Cifra / Graus e botões de transpor.
-3. As 5 ideias ao lado da cifra, com os acordes novos destacados.
+| Arquivo             | O que faz                                                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `ui/analysis.ts`    | Recebe o texto e as escolhas (tom, transposição, cifra ou graus) e devolve tudo pronto para desenhar. Testado sem navegador. |
+| `ui/layout.ts`      | Monta a linha de acordes em cima da letra. Se um rótulo cresce (`G` vira `V7/vi`), empurra o próximo para não encostar.      |
+| `ui/exemplo.ts`     | A cifra inventada que aparece quando o app abre.                                                                             |
+| `ui/Toolbar.tsx`    | Tom da cifra (dá para trocar se o detectado estiver errado), transpor e Cifra / Graus.                                       |
+| `ui/CifraView.tsx`  | A cifra inteira. Clicar numa seção escolhe o trecho para rearmonizar.                                                        |
+| `ui/IdeasPanel.tsx` | As 5 ideias, com "antes" e "depois" e os acordes novos destacados. A ideia escolhida mostra a explicação.                    |
+| `App.tsx`           | Guarda o estado da tela e liga os atalhos de teclado.                                                                        |
 
-Comece sempre pelo teste: escreva o exemplo que você quer que funcione, veja ele
-falhar e só então escreva a função.
+Atalhos: ↑ e ↓ trocam de ideia, ← e → trocam de seção, G alterna cifra e graus. Eles
+não funcionam enquanto você digita no campo da cifra.
+
+O `App.test.tsx` testa a tela de verdade num navegador simulado (jsdom): abrir com
+o exemplo, trocar de seção, ver graus, transpor, usar as setas e colar outra cifra.
+
+### Publicação
+
+O `.github/workflows/deploy.yml` publica o app no GitHub Pages a cada push na `main`,
+depois de rodar os testes. Para funcionar, o GitHub Pages precisa estar ligado no
+repositório com a origem "GitHub Actions" (Settings → Pages → Source).
+
+## 3. Próximo passo (semanas 11 a 14): som e link
+
+A v1 está pronta. A v2 traz:
+
+1. Tone.js com piano amostrado: ouvir o trecho original e a ideia escolhida.
+2. `voicing.ts`: baixo na mão esquerda e acorde fechado na direita.
+3. Teclado desenhado na tela acendendo as notas.
+4. Entrada por link (com uma função serverless pequena).
