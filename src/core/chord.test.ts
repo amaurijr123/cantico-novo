@@ -111,6 +111,16 @@ describe('parseChord + chordName: notação brasileira', () => {
     ['Em7(11)', 'Em7(11)'],
     ['F7M(9)', 'F7M(9)'],
     ['F7M(#11)', 'F7M(#11)'],
+    // "-" e "+" depois do número, como no Cifra Club: 9- é b9, 13- é b13, 11+ é #11.
+    ['G#7(9-)', 'G#7(b9)'],
+    ['G#7(13-)', 'G#7(b13)'],
+    ['G#7(9-/13-)', 'G#7(b9,b13)'],
+    ['C7(9+)', 'C7(#9)'],
+    ['F7M(11+)', 'F7M(#11)'],
+    ['Am7(5-)', 'Am7(b5)'],
+    ['G#7(5+)', 'G#7(#5)'],
+    // "7+" continua sendo sétima maior.
+    ['C7+', 'C7M'],
   ])('%s vira %s', (input, expected) => {
     expect(normalize(input)).toBe(expected)
   })

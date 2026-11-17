@@ -12,6 +12,7 @@
  *   C2            nona adicionada no estilo louvor (fica como foi escrito)
  *   C(add9)       nona adicionada; C9 e C(9) viram isto, porque sem sétima o 9 é "add"
  *   C7(9,13)      tensões em ordem crescente, separadas por vírgula
+ *   C7(b9,b13)    tensões alteradas; "C7(9-/13-)" também é lido assim
  *   C/E           baixo invertido
  */
 import { noteName, parseNote } from './notes'
@@ -53,7 +54,13 @@ export function parseChord(text: string): Chord | null {
   const rootMatch = /^([A-G][#b]?)(.*)$/.exec(symbol)
   if (!rootMatch) return null
   const root = parseNote(rootMatch[1])!
-  let rest = rootMatch[2]
+  // "9-" e "13-" querem dizer b9 e b13; "11+" quer dizer #11 (jeito comum no Brasil).
+  // Só vale para 5, 9, 11 e 13: "7+" continua sendo sétima maior.
+  let rest = rootMatch[2].replace(
+    /(^|[^\d])(5|9|11|13)([+-])/g,
+    (_, before: string, degree: string, sign: string) =>
+      `${before}${sign === '-' ? 'b' : '#'}${degree}`,
+  )
 
   // 1. Tira o que está entre parênteses: "(9,13)" e "(9/13)" viram ["9", "13"].
   const tokens: string[] = []

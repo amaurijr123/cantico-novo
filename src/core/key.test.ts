@@ -74,6 +74,20 @@ describe('detectSongKey: cifras de exemplo', () => {
     const song = parseCifra('Tom: C\n\n[Refrão]\nAm  F  C  G\nLetra inventada')
     expect(keySymbol(detectSongKey(song)[0].key)).toBe('C')
   })
+
+  it('numa música longa, o "Tom:" escrito vence quando está perto do primeiro', () => {
+    // Vamp de ii–V em Si maior que gira em torno do C#m, com G#7 levando ao C#m.
+    // Sem pista, C#m ganha; com "Tom: B", fica Si maior, como escreveu quem tirou a música.
+    const loop = 'C#m7 F#7 C#m7 F#7 B7M G#7 C#m7 F#7 F#m7 G#7 C#m7'
+    const list = chords(...`${loop} ${loop} ${loop}`.split(' '))
+    expect(best(list)).toBe('C#m')
+    expect(best(list, key('B', 'maior'))).toBe('B')
+  })
+
+  it('o "Tom:" escrito não vence quando está longe do primeiro', () => {
+    const list = chords(...'G D Em C G D Em C G D G'.split(' '))
+    expect(best(list, key('Eb', 'maior'))).toBe('G')
+  })
 })
 
 describe('keyName e keySymbol', () => {

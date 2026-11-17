@@ -63,17 +63,18 @@ Transforma texto como `Bm7(b5)/F` em um `Chord` (`parseChord`) e faz o caminho d
 volta (`chordName`). Ele aceita várias formas de escrever o mesmo acorde, mas sempre
 escreve de um jeito só, a forma padrão do app:
 
-| Você cola              | O app escreve | Por quê                                                        |
-| ---------------------- | ------------- | -------------------------------------------------------------- |
-| `Cmaj7`, `C7+`, `CM7`  | `C7M`         | Notação brasileira para sétima maior.                          |
-| `C°7`, `Cdim`, `Cº`    | `C°`          | No Brasil, `°` já quer dizer o diminuto com sétima.            |
-| `Bm7b5`, `Bø`          | `Bm7(b5)`     | Meio-diminuto.                                                 |
-| `C+`, `C5+`, `Caug`    | `C(#5)`       | Aumentado.                                                     |
-| `D4`, `Dsus`           | `Dsus4`       | Suspenso. Com sétima vira `D7(4)`.                             |
-| `C9`, `C(9)`, `Cadd9`  | `C(add9)`     | Sem sétima, a nona é adicionada.                               |
-| `A2`                   | `A2`          | Forma do louvor para a nona adicionada; fica como foi escrita. |
-| `C7(13,9)`, `C7(9/13)` | `C7(9,13)`    | Tensões em ordem crescente, com vírgula.                       |
-| `C6/9`                 | `C6(9)`       | A barra seguida de número não é baixo.                         |
+| Você cola                | O app escreve            | Por quê                                                                                      |
+| ------------------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
+| `Cmaj7`, `C7+`, `CM7`    | `C7M`                    | Notação brasileira para sétima maior.                                                        |
+| `C°7`, `Cdim`, `Cº`      | `C°`                     | No Brasil, `°` já quer dizer o diminuto com sétima.                                          |
+| `Bm7b5`, `Bø`            | `Bm7(b5)`                | Meio-diminuto.                                                                               |
+| `C+`, `C5+`, `Caug`      | `C(#5)`                  | Aumentado.                                                                                   |
+| `D4`, `Dsus`             | `Dsus4`                  | Suspenso. Com sétima vira `D7(4)`.                                                           |
+| `C9`, `C(9)`, `Cadd9`    | `C(add9)`                | Sem sétima, a nona é adicionada.                                                             |
+| `A2`                     | `A2`                     | Forma do louvor para a nona adicionada; fica como foi escrita.                               |
+| `C7(13,9)`, `C7(9/13)`   | `C7(9,13)`               | Tensões em ordem crescente, com vírgula.                                                     |
+| `C6/9`                   | `C6(9)`                  | A barra seguida de número não é baixo.                                                       |
+| `G#7(9-)`, `G#7(9-/13-)` | `G#7(b9)`, `G#7(b9,b13)` | No Brasil, `-` depois do número é bemol e `+` é sustenido. `7+` continua sendo sétima maior. |
 
 Como funciona, em quatro passos:
 
@@ -137,6 +138,10 @@ Os pontos, para cada acorde da música:
 
 E para a música inteira: +2 se começa no acorde do tom, +2 se termina nele e +4 se
 o tom é o mesmo escrito na cifra (`Tom: G`).
+
+Numa música longa, esses +4 quase não pesam. Por isso, se o tom escrito na cifra
+chegar a 85% da pontuação do primeiro colocado, ele vence: quem tirou a música
+costuma saber, e a diferença geralmente é só a dúvida entre relativos.
 
 O campo harmônico menor inclui o V maior da escala menor harmônica. É ele que
 desempata relativos: em `Em C G D B7 Em`, o `B7` só pertence a Mi menor.

@@ -17,6 +17,9 @@
  *   +2   o primeiro acorde é o acorde do tom
  *   +2   o último acorde é o acorde do tom
  *   +4   o tom é o mesmo escrito na cifra ("Tom: G")
+ *
+ * O tom escrito na cifra também vence quando chega a 85% da pontuação do primeiro
+ * colocado. Numa música longa, os +4 sozinhos quase não pesam.
  */
 import { noteFromPitchClass, noteName, pitchClass, mod12 } from './notes'
 import type { Chord, Key, Mode, Note, Song } from './types'
@@ -159,8 +162,25 @@ export function detectKey(chords: Chord[], options: { hint?: Key } = {}): KeyGue
     }
   }
   // `sort` é estável: no empate fica a ordem de criação (Dó maior, Dó menor, Dó# maior...).
-  return guesses.sort((a, b) => b.score - a.score)
+  guesses.sort((a, b) => b.score - a.score)
+
+  // O tom escrito na cifra foi escolhido por quem tirou a música. Se ele estiver perto
+  // do primeiro colocado, ele vence: a diferença costuma ser só a dúvida entre relativos.
+  const hint = options.hint
+  if (hint) {
+    const index = guesses.findIndex(
+      (g) =>
+        g.key.mode === hint.mode && pitchClass(g.key.tonic) === pitchClass(hint.tonic),
+    )
+    if (index > 0 && guesses[index].score >= guesses[0].score * DECLARED_KEY_MARGIN) {
+      guesses.unshift(...guesses.splice(index, 1))
+    }
+  }
+  return guesses
 }
+
+/** O tom escrito vence se tiver pelo menos esta fração da pontuação do primeiro. */
+const DECLARED_KEY_MARGIN = 0.85
 
 /** O tom da música inteira, usando todos os acordes e o "Tom:" escrito, se houver. */
 export function detectSongKey(song: Song): KeyGuess[] {
