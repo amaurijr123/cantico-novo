@@ -74,6 +74,10 @@ export interface Section {
 /** A cifra inteira depois de lida. */
 export interface Song {
   sections: Section[]
+  /** Tom escrito no topo da cifra ("Tom: G"), quando existe. Serve de pista para o key.ts. */
+  declaredKey?: Key
+  /** Coisas que o leitor ignorou de propósito, como tablaturas, para mostrar ao usuário. */
+  warnings: string[]
 }
 
 /** Identificador de cada técnica de rearmonização. */

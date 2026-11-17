@@ -92,10 +92,38 @@ Limitações conhecidas: acordes de quinta, como `E5`, ainda não são reconheci
 `G13`, que no jazz quer dizer `G7(9,13)`, é lido como `G(13)`, sem a sétima, porque
 segue a mesma regra do `C9`.
 
+### `src/core/parse.ts`
+
+Lê a cifra inteira colada (`parseCifra`) e devolve uma `Song`: as seções, cada uma
+com suas linhas, e cada linha com os acordes (e a coluna onde estavam) e a letra.
+
+A regra principal é simples: **uma linha é de acordes quando todas as palavras dela
+são acordes**. Basta uma palavra que não seja acorde para a linha ser de letra. Por
+isso "E a luz já vem" é letra (o "a" não é acorde), mesmo começando com `E`.
+
+Linha por linha, o leitor decide:
+
+| A linha é... | O que acontece                                                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| `[Refrão]`   | Fecha a seção anterior e abre uma nova. Acordes na mesma linha, como `[Intro] G D Em C`, entram na seção. |
+| `Tom: G`     | Vira o `declaredKey` da música, uma pista para o `key.ts`.                                                |
+| Acordes      | Ficam esperando a próxima linha. Se for letra, os dois viram um par.                                      |
+| Letra        | Junta com os acordes que estavam esperando, ou fica sem acordes.                                          |
+| Em branco    | A linha de acordes que estava esperando entra sozinha (é o caso da intro).                                |
+| Tablatura    | É ignorada e vira um aviso em `warnings`.                                                                 |
+
+Enfeites como `|`, `(2x)` e `x2` são aceitos numa linha de acordes e descartados.
+Antes do primeiro colchete ficam título, autor e "Tom:"; só os acordes que aparecem
+ali são guardados, numa seção "Início". Se a cifra não tiver nenhum colchete, tudo
+vira uma seção só, chamada "Música". Seções que ficam vazias são descartadas.
+
+`sectionChords(secao)` devolve só os acordes de uma seção, em ordem. É isso que as
+receitas vão receber.
+
 ## 3. Próximo passo (semanas 3 a 5)
 
 1. ~~`chord.ts`: transformar texto como `Bm7(b5)/F` em um `Chord`, e o caminho de volta.~~
-2. `parse.ts`: separar linha de acorde de linha de letra e montar as `Section`s.
+2. ~~`parse.ts`: separar linha de acorde de linha de letra e montar as `Section`s.~~
 3. `key.ts`: dar uma nota para cada uma das 24 tonalidades e escolher a melhor.
 4. `transpose.ts` e `roman.ts`: transpor e escrever em graus romanos.
 
