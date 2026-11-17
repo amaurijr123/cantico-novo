@@ -135,6 +135,23 @@ describe('parseCifra: formato colado do site', () => {
 })
 
 describe('parseCifra: casos de borda', () => {
+  it('ignora caracteres invisíveis que os sites põem no começo das linhas', () => {
+    // Do jeito que vem do Cifra Club: um "espaço de largura zero" (U+200B) em cada linha
+    // e às vezes espaço que não quebra (U+00A0) entre os acordes.
+    const zw = String.fromCharCode(0x200b)
+    const nbsp = String.fromCharCode(0x00a0)
+    const lines = [
+      `${zw}[Primeira Parte]`,
+      '',
+      `${zw} D${nbsp}${nbsp}Bm7`,
+      `${zw}Bendito seja`,
+    ]
+    const song = parseCifra(lines.join(String.fromCharCode(10)))
+    expect(song.sections.map((s) => s.name)).toEqual(['Primeira Parte'])
+    expect(names(song.sections[0])).toEqual(['D', 'Bm7'])
+    expect(song.sections[0].lines[0].lyric).toBe('Bendito seja')
+  })
+
   it('sem nenhuma seção marcada, tudo vira uma seção "Música"', () => {
     const song = parseCifra('G       D\nSó uma linha\nEm  C')
     expect(song.sections).toHaveLength(1)

@@ -49,8 +49,25 @@ function readKey(text: string): Key | undefined {
   return { tonic: chord.root, mode: chord.quality === 'menor' ? 'menor' : 'maior' }
 }
 
+/** Espaço de largura zero, separadores invisíveis e marca de ordem de bytes. */
+const INVISIBLE = new RegExp(
+  `[${[0x200b, 0x200c, 0x200d, 0x2060, 0xfeff].map((c) => String.fromCharCode(c)).join('')}]`,
+  'g',
+)
+const NO_BREAK_SPACE = new RegExp(String.fromCharCode(0xa0), 'g')
+
+/**
+ * Limpa caracteres que os sites colocam no texto e que não aparecem na tela:
+ * o Cifra Club, por exemplo, começa cada linha com um "espaço de largura zero"
+ * (U+200B), que faria "[Refrão]" e "D  Bm7" deixarem de ser reconhecidos.
+ * Espaço que não quebra linha (U+00A0) vira espaço comum.
+ */
+export function cleanText(text: string): string {
+  return text.replace(INVISIBLE, '').replace(NO_BREAK_SPACE, ' ').replace(/\r\n?/g, '\n')
+}
+
 export function parseCifra(text: string): Song {
-  const rawLines = text.replace(/\r\n?/g, '\n').split('\n')
+  const rawLines = cleanText(text).split('\n')
   const hasHeaders = rawLines.some((line) => HEADER_RE.test(line))
 
   const sections: Section[] = []
