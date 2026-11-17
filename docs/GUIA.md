@@ -147,12 +147,59 @@ em `A`). Em acorde invertido vale a fundamental, não o baixo: `F/G` é IV em D�
 `detectSongKey(musica)` junta todos os acordes da música e usa o `Tom:` como pista.
 `keyName` escreve "Si bemol maior" e `keySymbol` escreve "Bb".
 
-## 3. Próximo passo (semanas 3 a 5)
+### `src/core/transpose.ts`
 
-1. ~~`chord.ts`: transformar texto como `Bm7(b5)/F` em um `Chord`, e o caminho de volta.~~
-2. ~~`parse.ts`: separar linha de acorde de linha de letra e montar as `Section`s.~~
-3. ~~`key.ts`: dar uma nota para cada uma das 24 tonalidades e escolher a melhor.~~
-4. `transpose.ts` e `roman.ts`: transpor e escrever em graus romanos.
+Sobe ou desce a música alguns semitons. A conta das alturas é só somar, mas a
+**grafia** precisa de cuidado: a transposição anda com as letras junto. De Sol para
+Lá sobe uma letra, então `D/F#` vira `E/G#`. Isso mantém a função de cada acorde:
+
+| Acorde | Função | De  | Para | Vira           |
+| ------ | ------ | --- | ---- | -------------- |
+| `Bb`   | bVII   | Dó  | Ré   | `C` (não `B#`) |
+| `G#°`  | #i°    | Sol | Sib  | `B°`           |
+| `B7`   | V7/vi  | Sol | Fá   | `A7`           |
+
+Quando andar com as letras daria dobrado sustenido ou dobrado bemol (`C##`), o app
+usa a nota equivalente, escrita com # ou b conforme a armadura do tom novo.
+
+- `transposeKey(tom, semitons)` dá o tom novo com a grafia usual (Bb maior, F# menor).
+- `transposeChord(acorde, de, para)` leva um acorde de um tom para outro.
+- `transposeSong(musica, tom, semitons)` devolve uma música nova e o tom novo. A
+  original não muda, e a letra e as colunas ficam iguais.
+
+### `src/core/roman.ts`
+
+Escreve cada acorde pelo grau dele no tom. Maiúscula é acorde maior; minúscula é
+menor ou diminuto.
+
+| Em Sol maior        | Grau                | O que quer dizer                                |
+| ------------------- | ------------------- | ----------------------------------------------- |
+| `G`, `Em`, `C`      | `I`, `vi`, `IV`     | Campo harmônico                                 |
+| `Am7`, `D7`, `G7M`  | `ii7`, `V7`, `I7M`  | Com a sétima. Tensões como 9 e 13 ficam de fora |
+| `F#m7(b5)`, `D(#5)` | `viiø`, `V+`        | Meio-diminuto e aumentado                       |
+| `Cm`, `F`, `Eb`     | `iv`, `bVII`, `bVI` | Emprestados do tom menor                        |
+| `G#°`, `C#°`        | `#i°`, `#iv°`       | Diminutos de passagem                           |
+| `D/F#`, `G/D`       | `V/3`, `I/5`        | O número diz qual nota do acorde está no baixo  |
+
+`romanNumeral(acorde, tom)` olha o acorde sozinho. `romanNumerals(acordes, tom)`
+olha também o acorde seguinte, e assim reconhece duas coisas:
+
+- **Dominante secundário**: um acorde maior que resolve uma quarta acima, num grau
+  que não é o I. Em `G B7 Em`, o `B7` é `V7/vi`.
+- **ii–V para outro grau**: o acorde menor logo antes de um dominante secundário.
+  Em `G Dm7 G7 C`, fica `I ii7/IV V7/IV IV`.
+
+O botão Cifra / Graus da tela vai usar `romanNumerals` em cada seção.
+
+## 3. Próximo passo (semanas 6 a 8): as receitas
+
+A fase de ler a cifra está completa: `chord.ts`, `parse.ts`, `key.ts`,
+`transpose.ts` e `roman.ts`. Agora vêm as 7 receitas, uma por arquivo em
+`src/core/recipes/`, todas com a mesma forma:
+
+```ts
+type Recipe = (trecho: Chord[], tom: Key) => Idea[]
+```
 
 Comece sempre pelo teste: escreva o exemplo que você quer que funcione, veja ele
 falhar e só então escreva a função.

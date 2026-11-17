@@ -133,8 +133,13 @@ function spellTonic(tonic: number, mode: Mode, chords: Chord[], hint?: Key): Not
   if (hint && pitchClass(hint.tonic) === tonic) return hint.tonic
   const seen = chords.find((c) => pitchClass(c.root) === tonic)
   if (seen) return seen.root
+  return defaultTonic(tonic, mode)
+}
+
+/** Grafia usual da tônica de um tom: Bb maior (não A#), F# menor (não Gb). */
+export function defaultTonic(tonic: number, mode: Mode): Note {
   const flats = mode === 'maior' ? MAJOR_TONIC_PREFERS_FLAT : MINOR_TONIC_PREFERS_FLAT
-  return noteFromPitchClass(tonic, flats.has(tonic) ? 'flat' : 'sharp')
+  return noteFromPitchClass(tonic, flats.has(mod12(tonic)) ? 'flat' : 'sharp')
 }
 
 /**
