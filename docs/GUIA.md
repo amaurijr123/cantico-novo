@@ -49,9 +49,8 @@ jeito mais rápido de entender o que cada função faz.
 ### `tests/fixtures/`
 
 Oito cifras inventadas no estilo louvor. O `index.ts` diz, para cada uma, qual é o
-tom certo e quais seções existem. Hoje o teste só confere as seções com uma busca
-simples. Quando `parse.ts` e `key.ts` existirem, eles vão ser testados contra essas
-mesmas respostas.
+tom certo e quais seções existem. O `parse.ts` é testado contra as seções e o
+`key.ts` contra o tom de cada uma.
 
 ### `src/App.tsx` e `src/main.tsx`
 
@@ -120,11 +119,39 @@ vira uma seção só, chamada "Música". Seções que ficam vazias são descarta
 `sectionChords(secao)` devolve só os acordes de uma seção, em ordem. É isso que as
 receitas vão receber.
 
+### `src/core/key.ts`
+
+Descobre o tom pelos acordes. Em vez de escolher um tom só, `detectKey` dá pontos
+para as 24 tonalidades (12 maiores e 12 menores) e devolve todas em ordem. A tela
+mostra a primeira e deixa você trocar, porque às vezes a dúvida é real: Sol maior e
+Mi menor usam exatamente os mesmos acordes.
+
+Os pontos, para cada acorde da música:
+
+| Situação                         | Pontos | Exemplo em Sol maior |
+| -------------------------------- | ------ | -------------------- |
+| Pertence ao campo harmônico      | +1     | `Am` é o ii          |
+| É o acorde do tom                | +1     | cada `G`             |
+| É dominante com sétima no V grau | +1     | `D7`                 |
+| A fundamental nem está na escala | −0,5   | `G#°`, `Bb`          |
+
+E para a música inteira: +2 se começa no acorde do tom, +2 se termina nele e +4 se
+o tom é o mesmo escrito na cifra (`Tom: G`).
+
+O campo harmônico menor inclui o V maior da escala menor harmônica. É ele que
+desempata relativos: em `Em C G D B7 Em`, o `B7` só pertence a Mi menor.
+
+Acordes suspensos contam como maiores, porque fazem o mesmo papel (`Asus4` resolve
+em `A`). Em acorde invertido vale a fundamental, não o baixo: `F/G` é IV em Dó.
+
+`detectSongKey(musica)` junta todos os acordes da música e usa o `Tom:` como pista.
+`keyName` escreve "Si bemol maior" e `keySymbol` escreve "Bb".
+
 ## 3. Próximo passo (semanas 3 a 5)
 
 1. ~~`chord.ts`: transformar texto como `Bm7(b5)/F` em um `Chord`, e o caminho de volta.~~
 2. ~~`parse.ts`: separar linha de acorde de linha de letra e montar as `Section`s.~~
-3. `key.ts`: dar uma nota para cada uma das 24 tonalidades e escolher a melhor.
+3. ~~`key.ts`: dar uma nota para cada uma das 24 tonalidades e escolher a melhor.~~
 4. `transpose.ts` e `roman.ts`: transpor e escrever em graus romanos.
 
 Comece sempre pelo teste: escreva o exemplo que você quer que funcione, veja ele

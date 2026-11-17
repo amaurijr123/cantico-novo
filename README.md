@@ -38,6 +38,7 @@ src/
     notes.ts   notas e alturas: ler "F#", transpor, medir intervalos
     chord.ts   acordes na notação brasileira: ler "Bm7(b5)/F" e escrever de volta
     parse.ts   a cifra inteira: separa acordes da letra e monta as seções
+    key.ts     o tom: pontua as 24 tonalidades pelos acordes
   App.tsx      interface (provisória)
 tests/
   fixtures/    8 cifras inventadas no estilo louvor, com o tom e as seções esperados
