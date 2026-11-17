@@ -1,0 +1,49 @@
+:root {
+  --bg: #fafaf9;
+  --ink: #16181d;
+  --muted: #646a75;
+  font-family: Inter, system-ui, sans-serif;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317;
+    --ink: #ecedef;
+    --muted: #9aa0ab;
+    color-scheme: dark;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 16px;
+}
+
+h1 {
+  font-size: 40px;
+  margin: 4px 0 12px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  color: var(--muted);
+}
