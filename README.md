@@ -12,6 +12,10 @@ tarde, para escolher e explicar as ideias.
 No computador, ↑ e ↓ trocam de ideia, ← e → trocam de seção e G alterna entre
 cifra e graus romanos.
 
+Para trazer uma cifra do Cifra Club, clique em **Trazer do Cifra Club** no app e
+arraste o favorito para a barra do navegador. Depois é só abrir a cifra no site e
+clicar nele.
+
 ## Status
 
 | Fase        | O que entrega                                     | Situação |
@@ -46,6 +50,7 @@ src/
     key.ts        o tom: pontua as 24 tonalidades pelos acordes
     transpose.ts  subir e descer o tom, mantendo a grafia certa (Bb, não A#)
     roman.ts      graus romanos: I V/3 vi IV, V7/vi, ii7/IV
+    voicing.ts    em que notas tocar no teclado, com condução de vozes
     recipes/      as 7 técnicas de rearmonização e o seletor das 5 ideias
   ui/             componentes da tela: cifra, ideias, tom e transposição
   App.tsx         a tela principal e os atalhos de teclado

@@ -66,4 +66,35 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Rearmonizar' }))
     expect(screen.getByText('Não encontrei acordes nesse texto')).toBeTruthy()
   })
+
+  it('mostra em que notas tocar a ideia escolhida', () => {
+    render(<App />)
+    const table = screen.getByRole('table', { name: 'No teclado' })
+    const rows = within(table).getAllByRole('row')
+    // Cabeçalho + G D/F# B7 Em C
+    expect(rows).toHaveLength(6)
+    expect(within(rows[3]).getByRole('rowheader').textContent).toBe('B7')
+    expect(rows[3].textContent).toContain('B2')
+  })
+
+  it('abre com a cifra que veio pelo favorito e limpa o endereço', () => {
+    window.history.replaceState(
+      null,
+      '',
+      '/#cifra=' + encodeURIComponent('[Ponte]\nAm  F  C  G\nLetra inventada'),
+    )
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Ideias para Ponte' })).toBeTruthy()
+    expect(screen.getByText(/Cifra trazida pelo favorito/)).toBeTruthy()
+    expect(window.location.hash).toBe('')
+  })
+
+  it('mostra como instalar o favorito', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Trazer do Cifra Club' }))
+    const link = screen.getByText('Abrir no Cântico Novo')
+    expect(link.getAttribute('href')?.startsWith('javascript:')).toBe(true)
+    fireEvent.click(link)
+    expect(screen.getByText(/não funciona com clique aqui/)).toBeTruthy()
+  })
 })

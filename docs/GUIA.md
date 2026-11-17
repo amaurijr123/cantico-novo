@@ -251,17 +251,60 @@ não funcionam enquanto você digita no campo da cifra.
 O `App.test.tsx` testa a tela de verdade num navegador simulado (jsdom): abrir com
 o exemplo, trocar de seção, ver graus, transpor, usar as setas e colar outra cifra.
 
+### `src/core/voicing.ts`
+
+Diz em que notas do teclado tocar cada acorde. As notas usam a notação
+internacional: C4 é o Dó central.
+
+- **Mão esquerda:** só o baixo (a fundamental, ou a nota depois da barra em `D/F#`),
+  entre E2 e D#3.
+- **Mão direita:** o acorde fechado, com 3 ou 4 notas, entre A3 e G5.
+  - Tríade: fundamental, terça e quinta, mais a nona se for `add9` ou `2`.
+  - Com sétima: terça e sétima sempre; a nona entra no lugar da fundamental (o
+    baixo já toca a fundamental) e a 13ª no lugar da quinta.
+- **Condução de vozes:** `voiceProgression` escolhe, para cada acorde, a inversão
+  que anda menos a partir do anterior. Em `Am7 D7 G7M`, a mão direita faz
+  `C4 E4 G4 A4` → `C4 D4 F#4 A4` → `B3 D4 F#4 G4`: as notas em comum ficam paradas.
+- As notas são escritas com a letra certa do acorde (`F#4` em Ré maior, `Bb3` em Mib).
+
+Na tela, a ideia escolhida mostra a tabela "No teclado" com as duas mãos para cada
+acorde, com os acordes novos destacados.
+
+### O favorito "Abrir no Cântico Novo" (`ui/bookmarklet.ts`)
+
+O Cifra Club bloqueia acessos automáticos (responde "Access Denied"), então o app não
+busca a página sozinho, nem por um servidor. Em vez disso, ele usa um favorito no
+navegador (bookmarklet):
+
+1. Você clica em **Trazer do Cifra Club** no app e arrasta o botão "Abrir no Cântico
+   Novo" para a barra de favoritos.
+2. Abre a cifra no Cifra Club normalmente.
+3. Clica no favorito. Ele lê o maior bloco `<pre>` da página (onde ficam acordes e
+   letra) e a linha "Tom:", e abre o app numa aba nova com a cifra no endereço, depois
+   do `#cifra=`.
+4. O app lê a cifra do endereço e limpa o endereço logo em seguida.
+
+O que vem depois do `#` nunca é enviado pela internet, então a cifra vai direto do seu
+navegador para o app, sem servidor e sem ser salva.
+
+Detalhes do código:
+
+- `extractCifra(document)` é a função que roda na página do site. Ela não pode usar
+  nada de fora dela, porque vira texto dentro do favorito (`extractCifra.toString()`).
+- O React bloqueia endereços `javascript:` no `href`, então o `BookmarkletHelp.tsx`
+  coloca o endereço direto no elemento.
+- Se o site mudar o jeito de mostrar a cifra, o favorito pode parar de funcionar. Colar
+  o texto continua funcionando.
+
 ### Publicação
 
 O `.github/workflows/deploy.yml` publica o app no GitHub Pages a cada push na `main`,
 depois de rodar os testes. Para funcionar, o GitHub Pages precisa estar ligado no
 repositório com a origem "GitHub Actions" (Settings → Pages → Source).
 
-## 3. Próximo passo (semanas 11 a 14): som e link
+## 3. Próximo passo
 
-A v1 está pronta. A v2 traz:
+O voicing e o favorito estão prontos. Ficaram para depois:
 
-1. Tone.js com piano amostrado: ouvir o trecho original e a ideia escolhida.
-2. `voicing.ts`: baixo na mão esquerda e acorde fechado na direita.
-3. Teclado desenhado na tela acendendo as notas.
-4. Entrada por link (com uma função serverless pequena).
+1. Tone.js com piano amostrado, para ouvir o trecho original e a ideia escolhida.
+2. Teclado desenhado na tela acendendo as notas.

@@ -4,6 +4,8 @@ import { sectionChords } from './core/parse'
 import { suggestIdeas } from './core/recipes'
 import type { Key } from './core/types'
 import { analyze, type ViewMode } from './ui/analysis'
+import { readCifraFromHash } from './ui/bookmarklet'
+import { BookmarkletHelp } from './ui/BookmarkletHelp'
 import { CifraView } from './ui/CifraView'
 import { EXEMPLO } from './ui/exemplo'
 import { IdeasPanel } from './ui/IdeasPanel'
@@ -17,9 +19,21 @@ function isTyping(target: EventTarget | null): boolean {
   )
 }
 
+/** Cifra que chegou pelo favorito, no endereço depois do "#". */
+function cifraFromAddress(): string | null {
+  return readCifraFromHash(window.location.hash)
+}
+
+/** Tira a cifra do endereço, para ela não ficar no histórico nem voltar ao recarregar. */
+function clearAddress() {
+  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+}
+
 function App() {
-  const [text, setText] = useState(EXEMPLO)
-  const [draft, setDraft] = useState(EXEMPLO)
+  const [fromLink, setFromLink] = useState(() => cifraFromAddress() !== null)
+  const [text, setText] = useState(() => cifraFromAddress() ?? EXEMPLO)
+  const [draft, setDraft] = useState(text)
+  const [showHelp, setShowHelp] = useState(false)
   const [editing, setEditing] = useState(false)
   const [chosenKey, setChosenKey] = useState<Key>()
   const [semitones, setSemitones] = useState(0)
@@ -44,6 +58,28 @@ function App() {
     setSectionIndex(index)
     setIdeaIndex(0)
   }
+
+  // A cifra veio pelo favorito: limpa o endereço. Se outra chegar com o app aberto
+  // nesta aba, carrega ela também.
+  useEffect(() => {
+    if (fromLink) clearAddress()
+    const onHash = () => {
+      const incoming = cifraFromAddress()
+      if (incoming === null) return
+      clearAddress()
+      setText(incoming)
+      setDraft(incoming)
+      setChosenKey(undefined)
+      setSemitones(0)
+      setSectionIndex(0)
+      setIdeaIndex(0)
+      setEditing(false)
+      setFromLink(true)
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só ao abrir o app
+  }, [])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -70,6 +106,7 @@ function App() {
   }, [editing, ideas.length, current, sections.length])
 
   const applyDraft = () => {
+    setFromLink(false)
     setText(draft)
     setChosenKey(undefined)
     setSemitones(0)
@@ -85,18 +122,33 @@ function App() {
           <p>Cole uma cifra, escolha uma seção e receba 5 ideias de rearmonização.</p>
         </div>
         {!editing && (
-          <button
-            type="button"
-            className="button"
-            onClick={() => {
-              setDraft(text)
-              setEditing(true)
-            }}
-          >
-            Colar outra cifra
-          </button>
+          <div className="header-actions">
+            <button
+              type="button"
+              className="button ghost"
+              aria-expanded={showHelp}
+              onClick={() => setShowHelp((v) => !v)}
+            >
+              Trazer do Cifra Club
+            </button>
+            <button
+              type="button"
+              className="button"
+              onClick={() => {
+                setDraft(text)
+                setEditing(true)
+              }}
+            >
+              Colar outra cifra
+            </button>
+          </div>
         )}
       </header>
+
+      {showHelp && !editing && <BookmarkletHelp onClose={() => setShowHelp(false)} />}
+      {fromLink && !editing && analysis && (
+        <p className="notice">Cifra trazida pelo favorito. Nada dela foi salvo.</p>
+      )}
 
       {editing ? (
         <section className="editor" aria-label="Colar cifra">

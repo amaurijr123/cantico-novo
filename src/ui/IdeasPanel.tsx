@@ -1,5 +1,7 @@
+import { chordName } from '../core/chord'
 import { RECIPE_NAMES } from '../core/recipes'
 import type { Chord, Idea, Key } from '../core/types'
+import { voiceProgression } from '../core/voicing'
 import { labelsFor, type ViewMode } from './analysis'
 
 interface Props {
@@ -31,6 +33,32 @@ function ChordRow({
         </span>
       ))}
     </span>
+  )
+}
+
+/** Em que notas tocar cada acorde da ideia: baixo na esquerda, acorde na direita. */
+function KeyboardTable({ idea }: { idea: Idea }) {
+  const voicings = voiceProgression(idea.after)
+  return (
+    <table className="keyboard-table">
+      <caption>No teclado</caption>
+      <thead>
+        <tr>
+          <th scope="col">Acorde</th>
+          <th scope="col">Mão esquerda</th>
+          <th scope="col">Mão direita</th>
+        </tr>
+      </thead>
+      <tbody>
+        {idea.after.map((chord, i) => (
+          <tr key={i} className={idea.highlight.includes(i) ? 'is-new' : undefined}>
+            <th scope="row">{chordName(chord)}</th>
+            <td>{voicings[i].left.map((n) => n.name).join(' ')}</td>
+            <td>{voicings[i].right.map((n) => n.name).join(' ')}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
@@ -79,6 +107,7 @@ export function IdeasPanel({
               </span>
               {isSelected && <span className="idea-why">{idea.explanation}</span>}
             </button>
+            {isSelected && <KeyboardTable idea={idea} />}
           </li>
         )
       })}
