@@ -1,6 +1,4 @@
-# reharm
-
-> Nome provisório.
+# Cântico Novo
 
 Cole uma cifra, escolha um trecho da música e receba **5 ideias de rearmonização**:
 dominante secundário, ii–V, substituição de trítono, empréstimo modal, diminuto de
@@ -25,7 +23,7 @@ Precisa do Node 22 ou mais novo.
 
 ```bash
 npm install
-npm run dev        # abre o app em http://localhost:5173/reharm/
+npm run dev        # abre o app em http://localhost:5173/cantico-novo/
 npm test           # roda os testes uma vez
 npm run test:watch # roda os testes a cada arquivo salvo
 npm run check      # tudo o que o CI confere: lint, formatação, tipos, build e testes

@@ -11,7 +11,7 @@ function App() {
   return (
     <main>
       <p className="label">Em construção</p>
-      <h1>reharm</h1>
+      <h1>Cântico Novo</h1>
       <p>Cole uma cifra, escolha um trecho e receba 5 ideias de rearmonização.</p>
       <p className="mono">Escala de Sol maior: {escala.join('  ')}</p>
     </main>
