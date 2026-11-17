@@ -95,8 +95,12 @@ export interface Idea {
   recipe: RecipeId
   before: Chord[]
   after: Chord[]
+  /** Posições, em `after`, dos acordes novos ou mudados. A tela destaca esses. */
+  highlight: number[]
   /** Frase curta, em linguagem simples, explicando o que mudou. */
   explanation: string
+  /** O quanto a ideia costuma soar bem nesse lugar. O seletor usa para escolher as 5. */
+  score: number
 }
 
 /** Toda receita tem esta forma: recebe o trecho e o tom, devolve zero ou mais ideias. */

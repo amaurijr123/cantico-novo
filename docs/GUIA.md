@@ -191,15 +191,54 @@ olha também o acorde seguinte, e assim reconhece duas coisas:
 
 O botão Cifra / Graus da tela vai usar `romanNumerals` em cada seção.
 
-## 3. Próximo passo (semanas 6 a 8): as receitas
+### `src/core/recipes/`
 
-A fase de ler a cifra está completa: `chord.ts`, `parse.ts`, `key.ts`,
-`transpose.ts` e `roman.ts`. Agora vêm as 7 receitas, uma por arquivo em
-`src/core/recipes/`, todas com a mesma forma:
+As 7 técnicas de rearmonização, uma por arquivo. Todas têm a mesma forma:
 
 ```ts
 type Recipe = (trecho: Chord[], tom: Key) => Idea[]
 ```
+
+Cada `Idea` traz os acordes de antes (`before`) e de depois (`after`), as posições
+dos acordes novos (`highlight`, para a tela destacar), uma frase explicando o que
+mudou (`explanation`) e uma pontuação (`score`).
+
+| Receita                   | O que faz                                     | Exemplo em Sol        |
+| ------------------------- | --------------------------------------------- | --------------------- |
+| `dominante-secundario.ts` | Põe o V7 antes de um acorde que não é o I     | `G Em` → `G B7 Em`    |
+| `ii-v.ts`                 | Põe o ii e o V antes de um acorde             | `G C` → `G Dm7 G7 C`  |
+| `tritono.ts`              | Troca um dominante pelo que fica a um trítono | `D7 G` → `Ab7 G`      |
+| `emprestimo-modal.ts`     | Usa acordes do tom homônimo (iv, bVII, bVI)   | `C G` → `C Cm G`      |
+| `diminuto-passagem.ts`    | Liga dois acordes com um diminuto no meio     | `G Am` → `G G#° Am`   |
+| `baixo-pedal.ts`          | Segura a tônica ou a quinta no baixo          | `C D G` → `C/G D/G G` |
+| `tensoes.ts`              | Acrescenta sétima e nona conforme o grau      | `C` → `C7M(9)`        |
+
+Algumas regras para as receitas não atrapalharem a música:
+
+- Não insere o que já está lá: se o acorde de antes já é o V do alvo, o dominante
+  secundário e o ii–V pulam aquele ponto. Um acorde com o V no baixo (`Bb/C` antes
+  de `F`) também conta como V.
+- O alvo menor ganha `iiø` e `V7(b9)` no ii–V, porque soa mais natural no menor.
+- Nas tensões, o iii fica só com a sétima (a nona sairia da escala), e acordes que já
+  têm sétima ficam como estão.
+- Os acordes novos são escritos com a letra certa (`B7` em Sol, `Ab7` como
+  substituto de `D7`), evitando grafias raras como `E#` e `Cb`.
+
+**O seletor** ([index.ts](../src/core/recipes/index.ts)): `suggestIdeas(trecho, tom)`
+roda as 7 receitas, fica com a melhor ideia de cada uma e devolve as 5 de maior
+pontuação. Assim as 5 ideias são de técnicas diferentes. Se menos de 5 receitas
+tiverem algo a sugerir, completa com a segunda melhor ideia de cada uma.
+
+O arquivo `testing.ts` só tem atalhos para os testes, como `run(receita, 'G Em', 'G')`.
+
+## 3. Próximo passo (semanas 9 e 10): a interface
+
+O `core` está completo: lê a cifra, acha o tom, transpõe, escreve em graus e gera as
+5 ideias. Agora vem a tela em React, que só chama essas funções:
+
+1. Área para colar a cifra.
+2. Abas das seções, botão Cifra / Graus e botões de transpor.
+3. As 5 ideias ao lado da cifra, com os acordes novos destacados.
 
 Comece sempre pelo teste: escreva o exemplo que você quer que funcione, veja ele
 falhar e só então escreva a função.

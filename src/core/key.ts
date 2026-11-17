@@ -28,7 +28,7 @@ export interface KeyGuess {
 }
 
 /** O "tipo" de tríade que importa para o campo harmônico. */
-type TriadType = 'maior' | 'menor' | 'diminuto'
+export type TriadType = 'maior' | 'menor' | 'diminuto'
 
 /** Graus do campo harmônico: distância do tom em semitons e tipo de tríade. */
 interface Degree {
@@ -76,7 +76,8 @@ const POINTS = {
   declared: 4,
 }
 
-function triadType(chord: Chord): TriadType | null {
+/** Maior, menor ou diminuto: o tipo de tríade que importa para o campo harmônico. */
+export function triadType(chord: Chord): TriadType | null {
   switch (chord.quality) {
     case 'maior':
     case 'sus2':

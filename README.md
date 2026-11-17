@@ -13,8 +13,8 @@ tarde, para escolher e explicar as ideias.
 | ----------- | ------------------------------------------------- | -------- |
 | Fundação    | Projeto, testes, CI, fixtures                     | ✅       |
 | Ler a cifra | Acordes, seções, tom, graus romanos, transposição | ✅       |
-| Receitas    | As 7 técnicas e a escolha das 5 ideias            | ⏳       |
-| v1          | Interface: colar, escolher seção, ver ideias      |          |
+| Receitas    | As 7 técnicas e a escolha das 5 ideias            | ✅       |
+| v1          | Interface: colar, escolher seção, ver ideias      | ⏳       |
 | v2          | Ouvir no piano, teclado na tela, entrada por link |          |
 
 ## Rodando na sua máquina
@@ -41,6 +41,7 @@ src/
     key.ts        o tom: pontua as 24 tonalidades pelos acordes
     transpose.ts  subir e descer o tom, mantendo a grafia certa (Bb, não A#)
     roman.ts      graus romanos: I V/3 vi IV, V7/vi, ii7/IV
+    recipes/      as 7 técnicas de rearmonização e o seletor das 5 ideias
   App.tsx         interface (provisória)
 tests/
   fixtures/       8 cifras inventadas no estilo louvor, com o tom e as seções esperados

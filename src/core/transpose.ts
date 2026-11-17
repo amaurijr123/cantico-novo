@@ -11,11 +11,8 @@
  */
 import { chordName } from './chord'
 import { defaultTonic } from './key'
-import { mod12, noteFromPitchClass, pitchClass } from './notes'
-import type { Chord, Key, Note, NoteLetter, Song } from './types'
-
-const LETTERS: NoteLetter[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-const NATURAL_PITCH = [0, 2, 4, 5, 7, 9, 11]
+import { letterIndex, mod12, noteFromPitchClass, pitchClass, shiftNote } from './notes'
+import type { Chord, Key, Note, Song } from './types'
 
 /** Tônicas maiores com bemóis na armadura: F, Bb, Eb, Ab, Db. */
 const FLAT_MAJOR_TONICS = new Set([5, 10, 3, 8, 1])
@@ -34,7 +31,7 @@ function keyAccidentals(key: Key): 'sharp' | 'flat' | 'mixed' {
 }
 
 /** Escreve uma altura do jeito que o tom pede. */
-function spellInKey(pc: number, key: Key): Note {
+export function spellInKey(pc: number, key: Key): Note {
   const style = keyAccidentals(key)
   if (style === 'mixed')
     return noteFromPitchClass(pc, MIXED_SPELLING[mod12(pc)] === 'b' ? 'flat' : 'sharp')
@@ -43,18 +40,16 @@ function spellInKey(pc: number, key: Key): Note {
 
 /** Move uma nota `letterSteps` letras e `semitones` semitons, sem dobrados. */
 function moveNote(note: Note, letterSteps: number, semitones: number, to: Key): Note {
-  const letterIndex = (LETTERS.indexOf(note.letter) + letterSteps + 7) % 7
-  const target = mod12(pitchClass(note) + semitones)
-  const offset = mod12(target - NATURAL_PITCH[letterIndex])
-  const accidental = offset === 0 ? '' : offset === 1 ? '#' : offset === 11 ? 'b' : null
-  if (accidental === null) return spellInKey(target, to)
-  return { letter: LETTERS[letterIndex], accidental }
+  return (
+    shiftNote(note, letterSteps, semitones) ??
+    spellInKey(pitchClass(note) + semitones, to)
+  )
 }
 
 /** Distância em letras e em semitons entre as tônicas de dois tons. */
 function distance(from: Key, to: Key): { letters: number; semitones: number } {
   return {
-    letters: LETTERS.indexOf(to.tonic.letter) - LETTERS.indexOf(from.tonic.letter),
+    letters: letterIndex(to.tonic) - letterIndex(from.tonic),
     semitones: pitchClass(to.tonic) - pitchClass(from.tonic),
   }
 }

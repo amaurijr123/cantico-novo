@@ -56,3 +56,29 @@ export function noteFromPitchClass(pc: number, prefer: 'sharp' | 'flat' = 'sharp
 export function interval(from: Note, to: Note): PitchClass {
   return mod12(pitchClass(to) - pitchClass(from))
 }
+
+const LETTERS: NoteLetter[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+
+/** Posição da letra na sequência C D E F G A B (C = 0). */
+export function letterIndex(note: Note): number {
+  return LETTERS.indexOf(note.letter)
+}
+
+/**
+ * Anda `letterSteps` letras e `semitones` semitons a partir de uma nota, escrevendo o
+ * resultado com a letra certa: de Mi, 4 letras e 7 semitons acima é Si (a quinta);
+ * de Sol, 1 letra e 1 semitom acima é Láb (não Sol#).
+ *
+ * Devolve `null` quando o resultado precisaria de dobrado sustenido ou dobrado bemol.
+ */
+export function shiftNote(
+  note: Note,
+  letterSteps: number,
+  semitones: number,
+): Note | null {
+  const index = (((letterIndex(note) + letterSteps) % 7) + 7) % 7
+  const target = mod12(pitchClass(note) + semitones)
+  const offset = mod12(target - LETTER_PITCH[LETTERS[index]])
+  const accidental = offset === 0 ? '' : offset === 1 ? '#' : offset === 11 ? 'b' : null
+  return accidental === null ? null : { letter: LETTERS[index], accidental }
+}
