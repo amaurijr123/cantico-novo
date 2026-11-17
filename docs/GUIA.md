@@ -58,9 +58,43 @@ mesmas respostas.
 `main.tsx` liga o React à página. `App.tsx` é a tela, por enquanto só um aviso de
 "em construção" que usa o `core` para escrever a escala de Sol.
 
+### `src/core/chord.ts`
+
+Transforma texto como `Bm7(b5)/F` em um `Chord` (`parseChord`) e faz o caminho de
+volta (`chordName`). Ele aceita várias formas de escrever o mesmo acorde, mas sempre
+escreve de um jeito só, a forma padrão do app:
+
+| Você cola              | O app escreve | Por quê                                                        |
+| ---------------------- | ------------- | -------------------------------------------------------------- |
+| `Cmaj7`, `C7+`, `CM7`  | `C7M`         | Notação brasileira para sétima maior.                          |
+| `C°7`, `Cdim`, `Cº`    | `C°`          | No Brasil, `°` já quer dizer o diminuto com sétima.            |
+| `Bm7b5`, `Bø`          | `Bm7(b5)`     | Meio-diminuto.                                                 |
+| `C+`, `C5+`, `Caug`    | `C(#5)`       | Aumentado.                                                     |
+| `D4`, `Dsus`           | `Dsus4`       | Suspenso. Com sétima vira `D7(4)`.                             |
+| `C9`, `C(9)`, `Cadd9`  | `C(add9)`     | Sem sétima, a nona é adicionada.                               |
+| `A2`                   | `A2`          | Forma do louvor para a nona adicionada; fica como foi escrita. |
+| `C7(13,9)`, `C7(9/13)` | `C7(9,13)`    | Tensões em ordem crescente, com vírgula.                       |
+| `C6/9`                 | `C6(9)`       | A barra seguida de número não é baixo.                         |
+
+Como funciona, em quatro passos:
+
+1. Separa a fundamental (`B`, `F#`, `Bb`). Precisa ser maiúscula, porque "em" e "e"
+   são palavras da letra.
+2. Tira o que está entre parênteses e o baixo depois da barra.
+3. Lê a qualidade no começo do sufixo (`m`, `°`, `ø`, `+`).
+4. Lê o resto em pedaços conhecidos (`7M`, `7`, `sus4`, `9`, `b13`...). Se sobrar
+   qualquer coisa estranha, não é acorde e a função devolve `null`.
+
+O teste [chord.test.ts](../src/core/chord.test.ts) lista cada regra como exemplo e
+confere que todos os acordes das 8 cifras de exemplo são lidos e reescritos iguais.
+
+Limitações conhecidas: acordes de quinta, como `E5`, ainda não são reconhecidos. E
+`G13`, que no jazz quer dizer `G7(9,13)`, é lido como `G(13)`, sem a sétima, porque
+segue a mesma regra do `C9`.
+
 ## 3. Próximo passo (semanas 3 a 5)
 
-1. `chord.ts`: transformar texto como `Bm7(b5)/F` em um `Chord`, e o caminho de volta.
+1. ~~`chord.ts`: transformar texto como `Bm7(b5)/F` em um `Chord`, e o caminho de volta.~~
 2. `parse.ts`: separar linha de acorde de linha de letra e montar as `Section`s.
 3. `key.ts`: dar uma nota para cada uma das 24 tonalidades e escolher a melhor.
 4. `transpose.ts` e `roman.ts`: transpor e escrever em graus romanos.

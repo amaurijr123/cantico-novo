@@ -36,6 +36,7 @@ src/
   core/        teoria musical pura (sem React), toda testada
     types.ts   os tipos: Note, Chord, Key, Section, Idea, Recipe
     notes.ts   notas e alturas: ler "F#", transpor, medir intervalos
+    chord.ts   acordes na notação brasileira: ler "Bm7(b5)/F" e escrever de volta
   App.tsx      interface (provisória)
 tests/
   fixtures/    8 cifras inventadas no estilo louvor, com o tom e as seções esperados
